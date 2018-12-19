@@ -17,7 +17,7 @@ namespace Collector.Common.Heartbeat
         private const string HeartbeatScope = "Heartbeat";
         private const string ExecutionTimeScope = "ExecutionTime";
         private readonly Func<T, Task<DiagnosticsResults>> _healthCheckFunc;
-        private readonly ILogger _logger;
+        private ILogger _logger;
         private readonly RequestDelegate _next;
         private readonly HeartbeatOptions _options;
 
@@ -45,6 +45,10 @@ namespace Collector.Common.Heartbeat
         {
             if (httpContext == null)
                 throw new ArgumentNullException(nameof(httpContext));
+
+            var logger = (ILogger)httpContext.RequestServices.GetService(typeof(ILogger));
+            if (logger != null)
+                _logger = logger;
 
             if (httpContext.Request.Method.Equals(HttpMethod.Get.Method, StringComparison.OrdinalIgnoreCase))
                 await InvokeHeartbeat(httpContext);
