@@ -1,5 +1,5 @@
 ﻿$args = @{
-    Uri = "http://localhost:64344/api/heartbeat"
+    Uri = "http://localhost:5000/api/heartbeat"
     Method = "Get"
     Headers = @{ "DiagnosticsAPIKey"="Secret" }
 }

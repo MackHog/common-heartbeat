@@ -32,7 +32,7 @@ namespace Collector.Common.Heartbeat
             Func<T, Task<DiagnosticsResults>> healthCheckFunc)
         {
             _next = next ?? throw new ArgumentNullException(nameof(next));
-            _logger = loggerFactory?.CreateLogger(typeof(HeartbeatMiddleware<T>)) ??
+            _logger = loggerFactory?.CreateLogger(typeof(T)) ??
                       throw new ArgumentNullException(nameof(loggerFactory));
             _options = options ?? throw new ArgumentNullException(nameof(options));
             _healthCheckFunc = healthCheckFunc ?? throw new ArgumentNullException(nameof(healthCheckFunc));
@@ -45,8 +45,8 @@ namespace Collector.Common.Heartbeat
         {
             if (httpContext == null)
                 throw new ArgumentNullException(nameof(httpContext));
-
-            var logger = (ILogger)httpContext.RequestServices.GetService(typeof(ILogger));
+            
+            var logger = (ILogger<T>)httpContext.RequestServices.GetService(typeof(ILogger<T>));
             if (logger != null)
                 _logger = logger;
 

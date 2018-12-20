@@ -25,28 +25,25 @@ namespace Serilog.HeartbeatExample
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<IHeartbeatMonitor, HeartbeatMonitor>();
+            services.AddScoped<IHeartbeatMonitor, HeartbeatMonitor>();
             services.AddScoped<ILogger>(p =>
             {
                 var loggerConfig = new LoggerConfiguration()
                     .WriteTo.Console(outputTemplate: "{Timestamp:HH:mm} [{Level}] [{CorrelationId}]: {Message}{NewLine}")
                     .WriteTo.Trace(outputTemplate: "{Timestamp:HH:mm} [{Level}] [{CorrelationId}]: {Message}{NewLine}")
                     .CreateLogger();
-                var logger = loggerConfig.ForContext("CorrelationId", "123456789");
-                var loggerFactory = p.GetRequiredService<ILoggerFactory>();
+               return loggerConfig.ForContext("CorrelationId", Guid.NewGuid().ToString());
             });
-            services.AddScoped<Microsoft.Extensions.Logging.ILogger>(p =>
+            services.AddScoped<Microsoft.Extensions.Logging.ILogger<IHeartbeatMonitor>>(p =>
             {
                 var loggerFactory = p.GetRequiredService<ILoggerFactory>();
                 var serilogger = p.GetRequiredService<ILogger>();
-                return loggerFactory.AddSerilog(serilogger).CreateLogger<HeartbeatMonitor>();
+                return loggerFactory.AddSerilog(serilogger).CreateLogger<IHeartbeatMonitor>();
             });
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             app.UseHeartbeat<IHeartbeatMonitor>(x => x.RunAsync(), options =>
