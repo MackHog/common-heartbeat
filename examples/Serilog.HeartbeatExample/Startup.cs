@@ -34,7 +34,7 @@ namespace Serilog.HeartbeatExample
                     .WriteTo.Console(outputTemplate: "{Timestamp:HH:mm} [{Level}] [{CorrelationId}]: {Message}{NewLine}")
                     .WriteTo.Trace(outputTemplate: "{Timestamp:HH:mm} [{Level}] [{CorrelationId}]: {Message}{NewLine}")
                     .CreateLogger();
-               return loggerConfig.ForContext("CorrelationId", Guid.NewGuid().ToString());
+                return loggerConfig.ForContext("CorrelationId", Guid.NewGuid().ToString());
             });
             services.AddScoped<Microsoft.Extensions.Logging.ILogger<IHeartbeatMonitor>>(p =>
             {

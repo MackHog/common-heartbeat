@@ -45,7 +45,7 @@ namespace Collector.Common.Heartbeat
         {
             if (httpContext == null)
                 throw new ArgumentNullException(nameof(httpContext));
-            
+
             // Use ILogger<T> if registered to enable the use of scoped logger implementation
             var logger = (ILogger<T>)httpContext.RequestServices.GetService(typeof(ILogger<T>));
             if (logger != null)
